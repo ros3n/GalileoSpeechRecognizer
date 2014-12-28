@@ -86,3 +86,10 @@ BYTE * loadWaveFile(char *fname)
 
 	return NULL;
 }
+
+double hammingWindow(int n, int N)
+{
+	double a = 0.54;
+
+	return a - (1.0 - a) * cos((2 * M_PI * n) / (N - 1));
+}

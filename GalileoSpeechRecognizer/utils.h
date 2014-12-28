@@ -12,6 +12,6 @@ typedef unsigned long DWORD, *PDWORD, *LPDWORD;
 
 int firstPowerOfTwo(int n);
 BYTE * loadWaveFile(char *fname);
-
+double hammingWindow(int n, int N);
 
 #endif

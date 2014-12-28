@@ -20,6 +20,7 @@ const double FRAME_LENGTH = 0.025;
 const int S = 400; //number of samples ( SAMPLING_FREQ * FRAME_LENGTH ) VS has complained about not constant expression
 int input[S];
 int N = firstPowerOfTwo(S);
+double *P;
 
 //long long milliseconds_now() {
 //	static LARGE_INTEGER s_frequency;
@@ -88,17 +89,9 @@ void analyzeInput(void *params)
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	complex a = fromPolar(1, 1.31);
-	complex b;
-	b.re = 3;
-	b.im = 6;
-	add(a, b);
-
-	Log(L"re = %lf, im = %lf\n", a.re, a.im);
-
 	//pinMode(MICROPHONE_PIN, INPUT);
 
-	BYTE *samples = loadWaveFile("wavTones.com.unregistred.sin_1000Hz_-6dBFS_3s.wav");
+	BYTE *samples = loadWaveFile("60Hz_7000Hz_1s.wav");
 
 	if (samples == NULL)
 	{
@@ -110,7 +103,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	for (int i = 0; i < S; i++)
 	{
-		x[i].re = 100 * sin(i * 2 * M_PI / 160) + 100;// (double)samples[i];
+		x[i].re = (double)samples[i] * hammingWindow(i, N); //*/ 100 * sin(i * 2 * M_PI / 16) + 100;
 		x[i].im = 0;
 	}
 
@@ -133,21 +126,27 @@ int _tmain(int argc, _TCHAR* argv[])
 	double m, res = 0;
 	int j;
 
-	for (int i = 1; i < N/2; i++)
+	/*for (int i = 1; i < N/2; i++)
 	{
 		m = magnitude(X[i]);
-		Log(L"f = %d, mag = %lf\n", i * SAMPLING_FREQ / N, m);
-		
+		//Log(L"f = %d, mag = %lf\n", i * SAMPLING_FREQ / N, m);
+		Log(L"%lf\n", m);
 		if (m > res)
 		{
-			Log(L"f = %d, mag = %lf\n", i * SAMPLING_FREQ / N, m);
+			//Log(L"f = %d, mag = %lf\n", i * SAMPLING_FREQ / N, m);
 			res = m;
 			j = i;
 		}
-	}
+	}*/
 
 	Log(L"f = %d, mag = %lf\n", j * SAMPLING_FREQ / N, res);
 
+	P = (double *)malloc(sizeof(double) * N / 2);
+
+	for (int i = 0; i < N / 2; i++)
+	{
+		P[i] = 1/N * pow(magnitude(X[i]), 2);
+	}
 	//Log(L"Launching handleInput thread..\n");
 	//_beginthread(handleInput, 0, NULL);
 	//handleInput();
