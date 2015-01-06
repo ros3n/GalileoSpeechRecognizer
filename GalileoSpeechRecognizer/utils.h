@@ -7,11 +7,11 @@
 #include "stdafx.h"
 #include "arduino.h"
 
-typedef unsigned char BYTE, *PBYTE, *LPBYTE;
-typedef unsigned long DWORD, *PDWORD, *LPDWORD;
+//typedef char BYTE, *PBYTE, *LPBYTE;
+//typedef long DWORD, *PDWORD, *LPDWORD;
 
 int firstPowerOfTwo(int n);
-BYTE * loadWaveFile(char *fname);
+short * loadWaveFile(char *fname);
 double hammingWindow(int n, int N);
 
 #endif

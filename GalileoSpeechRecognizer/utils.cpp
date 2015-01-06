@@ -12,13 +12,14 @@ int firstPowerOfTwo(int n)
 	return k;
 }
 
-BYTE * loadWaveFile(char *fname)
+short * loadWaveFile(char *fname)
 {
 	FILE *fp;
 
 	if (fopen_s(&fp, fname, "rb") == 0)
 	{
-		BYTE id[5], *sound_buffer; // four bytes to hold 'RIFF' 
+		BYTE id[5]; // four bytes to hold 'RIFF'
+		short *sound_buffer;
 		DWORD size; // 32 bit value to hold file size 
 		short format_tag, channels, block_align, bits_per_sample; // 16 bit values 
 		DWORD format_length, sample_rate, avg_bytes_sec, data_size, i; // 32 bit values 
@@ -56,10 +57,10 @@ BYTE * loadWaveFile(char *fname)
 				{
 					fread_s(&data_size, sizeof(data_size), sizeof(DWORD), 1, fp); // how many bytes of sound data we have 
 					Log("data_size: %ld\n", data_size);
-					sound_buffer = (BYTE *)malloc(sizeof(BYTE) * data_size);
+					sound_buffer = (short *)malloc(sizeof(short) * data_size);
 					if (sound_buffer != NULL)
 					{
-						fread_s(sound_buffer, sizeof(BYTE) * data_size, sizeof(BYTE), data_size, fp); // read in whole sound data chunk 
+						fread_s(sound_buffer, sizeof(short) * data_size, sizeof(short), data_size, fp); // read in whole sound data chunk 
 
 						return sound_buffer;
 					}
