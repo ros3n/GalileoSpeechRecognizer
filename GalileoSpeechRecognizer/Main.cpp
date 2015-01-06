@@ -131,10 +131,10 @@ int _tmain(int argc, _TCHAR* argv[])
 	double m, res = 0;
 	int j;
 
-	for (int i = 1; i < N/2; i++)
+	for (int i = 1; i <= N/2; i++)
 	{
 		m = magnitude(X[i]);
-		Log(L"i = %d, f = %d, mag = %lf\n", i, i * SAMPLING_FREQ / N, m);
+		//Log(L"i = %d, f = %d, mag = %lf\n", i, i * SAMPLING_FREQ / N, m);
 		//Log(L"%lf\n", m);
 		if (m > res)
 		{
@@ -144,13 +144,14 @@ int _tmain(int argc, _TCHAR* argv[])
 		}
 	}
 
-	Log(L"f = %d, mag = %lf\n", j * SAMPLING_FREQ / N, res);
+	//Log(L"f = %d, mag = %lf\n", j * SAMPLING_FREQ / N, res);
 
-	P = (double *)malloc(sizeof(double) * N / 2);
+	P = (double *)malloc(sizeof(double) * N / 2 + 1);
 
-	for (int i = 0; i < N / 2; i++)
+	for (int i = 0; i <= N / 2; i++)
 	{
 		P[i] = (1.0 / (double)N) * pow(magnitude(X[i]), 2);
+		//Log("%lf\n", P[i]);
 	}
 
 	//Log("****\n");
@@ -162,11 +163,11 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	double diff = (melUpperBound - melLowerBound) / ((double)FILTERBANKS + 1);
 
-	Log("%lf\n", melLowerBound);
+	//Log("%lf\n", melLowerBound);
 
-	Log("%lf\n", melUpperBound);
+	//Log("%lf\n", melUpperBound);
 
-	Log("%lf\n", diff);
+	//Log("%lf\n", diff);
 
 	double filter;
 
@@ -175,35 +176,52 @@ int _tmain(int argc, _TCHAR* argv[])
 		filter = 700.0 * (exp((melLowerBound + (double)i * diff) / 1125.0) - 1.0);
 		fftBins[i] = floor(filter * (N + 1) / SAMPLING_FREQ);
 
-		Log("%lf - %lf\n", filter, fftBins[i]);
+		//Log("%lf - %lf\n", filter, fftBins[i]);
 	}
 
-	double **filterBanks = (double **)malloc((sizeof(double *) * FILTERBANKS));
+	double *filterBankEnergies = (double *)malloc(sizeof(double) * FILTERBANKS);
 
 	for (int m = 1; m <= FILTERBANKS; m++)
 	{
-		filterBanks[m - 1] = (double *)malloc(sizeof(double) * N / 2);
-		for (int k = 0; k < N / 2; k++)
+		double result = 0;
+		for (int k = 0; k <= N / 2; k++)
 		{
 			if (k >= fftBins[m - 1] && k <= fftBins[m])
 			{
-				filterBanks[m - 1][k] = (k - fftBins[m - 1]) / (fftBins[m] - fftBins[m - 1]);
+				result += P[k] * ((k - fftBins[m - 1]) / (fftBins[m] - fftBins[m - 1]));
 			}
 			else if (k >= fftBins[m] && k <= fftBins[m + 1])
 			{
-				filterBanks[m - 1][k] = (fftBins[m + 1] - k) / (fftBins[m + 1] - fftBins[m]);
-			}
-			else
-			{
-				filterBanks[m - 1][k] = 0;
+				result += P[k] * ((fftBins[m + 1] - k) / (fftBins[m + 1] - fftBins[m]));
 			}
 		}
+		filterBankEnergies[m-1] = log(result);
+		//Log("%lf\n", log(result));
+	}
 
-		for (int k = 0; k < N / 2; k++)
+	double *DCT = (double *)malloc(sizeof(double) * FILTERBANKS);
+
+	DCT[0] = 0.0;
+	double N1 = (1 / sqrt((double)FILTERBANKS));
+	for (int m = 0; m < FILTERBANKS; m++)
+	{
+		DCT[0] += N1 * filterBankEnergies[m];
+	}
+
+	N1 = sqrt(2.0 / (double)FILTERBANKS);
+
+	for (int k = 1; k < FILTERBANKS; k++)
+	{
+		DCT[k] = 0.0;
+		for (int m = 0; m < FILTERBANKS; m++)
 		{
-			Log("%lf\n", filterBanks[m - 1][k]);
+			DCT[k] += N1 * filterBankEnergies[m] * cos((M_PI * (double)k * (2.0 * (double)m + 1)) / (2.0 * (double)FILTERBANKS));
 		}
-		Log("\n\n\n");
+	}
+
+	for (int k = 0; k < FILTERBANKS; k++)
+	{
+		Log("%lf\n", DCT[k]);
 	}
 
 	//Log(L"Launching handleInput thread..\n");
