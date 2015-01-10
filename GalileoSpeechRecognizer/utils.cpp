@@ -22,41 +22,41 @@ short * loadWaveFile(char *fname)
 		short *sound_buffer;
 		DWORD size; // 32 bit value to hold file size 
 		short format_tag, channels, block_align, bits_per_sample; // 16 bit values 
-		DWORD format_length, sample_rate, avg_bytes_sec, data_size, i; // 32 bit values 
+		DWORD format_length, sample_rate, avg_bytes_sec, data_size; // 32 bit values 
 
 		fread_s(id, sizeof(id), sizeof(BYTE), 4, fp); //read in first four bytes 
 		id[4] = NULL;
-		Log("%s\n", id);
+		//Log("%s\n", id);
 		if (!strcmp((const char *)id, "RIFF"))
 		{
 			fread_s(&size, sizeof(DWORD), sizeof(DWORD), 1, fp); // read in 32bit size value
-			Log("%ld\n", size);
+			//Log("%ld\n", size);
 			fread_s(id, sizeof(id), sizeof(BYTE), 4, fp); // read in 4 byte string now 
-			Log("%s\n", id);
+			//Log("%s\n", id);
 			if (!strcmp((const char *)id, "WAVE"))
 			{
 				fread_s(id, sizeof(id), sizeof(BYTE), 4, fp); // read in 4 bytes "fmt "; 
-				Log("%s\n", id);
+				//Log("%s\n", id);
 				fread_s(&format_length, sizeof(format_length), sizeof(DWORD), 1, fp);
-				Log("format_length: %ld\n", format_length);
+				//Log("format_length: %ld\n", format_length);
 				fread_s(&format_tag, sizeof(format_tag), sizeof(short), 1, fp);
-				Log("format_tag:%d\n", format_tag);
+				//Log("format_tag:%d\n", format_tag);
 				fread_s(&channels, sizeof(channels), sizeof(short), 1, fp); // 1 mono, 2 stereo 
-				Log("channels: %d\n", channels);
+				//Log("channels: %d\n", channels);
 				fread_s(&sample_rate, sizeof(sample_rate), sizeof(DWORD), 1, fp);
-				Log("sample_rate: %ld\n", sample_rate);
+				//Log("sample_rate: %ld\n", sample_rate);
 				fread_s(&avg_bytes_sec, sizeof(avg_bytes_sec), sizeof(DWORD), 1, fp);
-				Log("avg_bytes_ses: %d\n", avg_bytes_sec);
+				//Log("avg_bytes_ses: %d\n", avg_bytes_sec);
 				fread_s(&block_align, sizeof(block_align), sizeof(short), 1, fp);
-				Log("block_align: %d\n", block_align);
+				//Log("block_align: %d\n", block_align);
 				fread_s(&bits_per_sample, sizeof(bits_per_sample), sizeof(short), 1, fp);
-				Log("bits_per_sample: %d\n", bits_per_sample);
+				//Log("bits_per_sample: %d\n", bits_per_sample);
 				fread_s(id, sizeof(id), sizeof(BYTE), 4, fp); // read in 'data' 
-				Log("%s\n", id);
+				//Log("%s\n", id);
 				if (!strcmp((const char *)id, "data"))
 				{
 					fread_s(&data_size, sizeof(data_size), sizeof(DWORD), 1, fp); // how many bytes of sound data we have 
-					Log("data_size: %ld\n", data_size);
+					//Log("data_size: %ld\n", data_size);
 					sound_buffer = (short *)malloc(sizeof(short) * data_size);
 					if (sound_buffer != NULL)
 					{
