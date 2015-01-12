@@ -84,6 +84,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="comparator.h" />
     <ClInclude Include="complex.h" />
     <ClInclude Include="config.h" />
     <ClInclude Include="featureExtraction.h" />
@@ -93,6 +94,7 @@
     <ClInclude Include="utils.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="comparator.cpp" />
     <ClCompile Include="complex.cpp" />
     <ClCompile Include="featureExtraction.cpp" />
     <ClCompile Include="fft.cpp" />

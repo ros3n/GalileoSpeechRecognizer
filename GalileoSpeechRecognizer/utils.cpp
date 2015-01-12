@@ -56,7 +56,7 @@ short * loadWaveFile(char *fname)
 				if (!strcmp((const char *)id, "data"))
 				{
 					fread_s(&data_size, sizeof(data_size), sizeof(DWORD), 1, fp); // how many bytes of sound data we have 
-					//Log("data_size: %ld\n", data_size);
+					Log("data_size: %ld\n", data_size);
 					sound_buffer = (short *)malloc(sizeof(short) * data_size);
 					if (sound_buffer != NULL)
 					{

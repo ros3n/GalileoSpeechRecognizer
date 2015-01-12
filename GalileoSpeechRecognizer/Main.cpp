@@ -12,6 +12,7 @@
 #include "config.h"
 #include "utils.h"
 #include "featureExtraction.h"
+#include "comparator.h"
 
 using namespace std;
 
@@ -86,7 +87,7 @@ int _tmain(int argc, _TCHAR* argv[])
 {
 	//pinMode(MICROPHONE_PIN, INPUT);
 
-	short *samples = loadWaveFile("60Hz_7000Hz_1s.wav");
+	short *samples = loadWaveFile("disable.wav");
 
 	if (samples == NULL)
 	{
@@ -94,16 +95,27 @@ int _tmain(int argc, _TCHAR* argv[])
 		return -1;
 	}
 
-	double *features = extractFeatures(samples);
+	/*double *features = extractFeatures(samples);
 
 	if (features == NULL)
 	{
 		Log("Error: feature extraction failed\n");
 
 		return -1;
+	}*/
+
+	double **input = (double **)malloc(sizeof(double *) * 185);
+
+	for (int i = 0; i < 185; i++)
+	{
+		double *features = extractFeatures(samples + i * 160);
+		input[i] = (double *)malloc(sizeof(double)* 13);
+		for (int j = 0; j < 13; j++)
+			input[i][j] = features[j];
+		free(features);
 	}
 
-	samples = loadWaveFile("audiocheck.net_sin_1000Hz_-3dBFS_3s.wav");
+	samples = loadWaveFile("60Hz_7000Hz_3s.wav");
 
 	if (samples == NULL)
 	{
@@ -111,14 +123,29 @@ int _tmain(int argc, _TCHAR* argv[])
 		return -1;
 	}
 
-	features = extractFeatures(samples);
+	double **input2 = (double **)malloc(sizeof(double *) * 595);
+
+	for (int i = 0; i < 595; i++)
+	{
+		double *features = extractFeatures(samples + i * 160);
+		input2[i] = (double *)malloc(sizeof(double) * 13);
+		for (int j = 0; j < 13; j++)
+			input2[i][j] = features[j];
+		free(features);
+	}
+	Log("dtw\n");
+	double dist = dtw(input, 185, input2, 595);
+
+	Log("%lf\n", dist);
+
+	/*features = extractFeatures(samples);
 
 	if (features == NULL)
 	{
 		Log("Error: feature extraction failed\n");
 
 		return -1;
-	}
+	}*/
 
 	//Log(L"Launching handleInput thread..\n");
 	//_beginthread(handleInput, 0, NULL);

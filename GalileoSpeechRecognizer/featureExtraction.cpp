@@ -121,10 +121,10 @@ double * extractFeatures(short *samples)
 		}
 	}
 
-	for (int k = 0; k < FILTERBANKS; k++)
+	/*for (int k = 0; k < FILTERBANKS; k++)
 	{
 		Log("%lf\n", DCT[k]);
-	}
+	}*/
 
 	free(P);
 	free(x);
