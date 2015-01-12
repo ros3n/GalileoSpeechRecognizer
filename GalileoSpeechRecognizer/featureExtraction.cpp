@@ -33,7 +33,7 @@ double * extractFeatures(short *samples)
 	
 	X = fft(x, N);
 
-	P = (double *)malloc(sizeof(double) * N / 2 + 1);
+	P = (double *)malloc(sizeof(double) * (N / 2 + 1));
 
 	if (P == NULL)
 	{
@@ -126,12 +126,10 @@ double * extractFeatures(short *samples)
 		Log("%lf\n", DCT[k]);
 	}
 
-	Log("free?\n");
-/*	free(P);
-/*	free(x);
+	free(P);
+	free(x);
 	free(X);
 	free(fftBins);
-	free(filterBankEnergies); //*/
-	Log("free\n");
+	free(filterBankEnergies);
 	return DCT;
 }
