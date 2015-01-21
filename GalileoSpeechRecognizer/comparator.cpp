@@ -2,10 +2,10 @@
 
 double dtw(double **sample, int sample_len, double **pattern, int pattern_len)
 {
-	double **DTW = (double **)malloc(sizeof(double *) * (pattern_len + 1));
+	double **DTW = (double **)malloc(sizeof(double *)* (pattern_len + 1));
 	for (int i = 0; i <= pattern_len; i++)
 	{
-		DTW[i] = (double *)malloc(sizeof(double) * (sample_len + 1));
+		DTW[i] = (double *)malloc(sizeof(double)* (sample_len + 1));
 	}
 
 	int w = 0;
@@ -29,6 +29,46 @@ double dtw(double **sample, int sample_len, double **pattern, int pattern_len)
 			//Log("%d %d\n\n", i, j);
 			DTW[i][j] = cost + fmin(fmin((double)DTW[i - 1][j], (double)DTW[i][j - 1]), (double)DTW[i - 1][j - 1]);
 			//Log("%d %d %lf\n\n", i, j, DTW[i][j]);
+		}
+	}
+
+	double result = DTW[pattern_len][sample_len];
+	free(DTW);
+	return result;
+}
+
+
+double dtw1(double **sample, int sample_len, double **pattern, int pattern_len)
+{
+	double **DTW = (double **)malloc(sizeof(double *) * (pattern_len + 1));
+	for (int i = 0; i <= pattern_len; i++)
+	{
+		DTW[i] = (double *)malloc(sizeof(double) * (sample_len + 1));
+	}
+
+	int w = 0;
+	w = (int)fmax((double)w, (double)abs(pattern_len - sample_len)); // adapt window size (*)
+
+	for (int i = 0; i <= pattern_len; i++)
+	{
+		DTW[i][0] = 99999.0;
+	}
+
+	for (int j = 0; j <= sample_len; j++)
+	{
+		DTW[0][j] = 99999.0;
+	}
+
+	DTW[0][0] = 0.0;
+
+	for (int i = 1; i <= pattern_len; i++)
+	{
+		for (int j = 1; j <= sample_len; j++)
+		{
+			double cost = distance(pattern[i - 1], sample[j - 1]);
+			double shift = fmin((double)DTW[i][j - 1], (double)DTW[i - 1][j - 1]);
+			shift = fmin((double)DTW[i - 1][j], shift);
+			DTW[i][j] = cost + shift;
 		}
 	}
 
